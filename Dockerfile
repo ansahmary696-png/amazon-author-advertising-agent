@@ -1,14 +1,13 @@
-SECRET_KEY=change_this_secret
-ADMIN_USERNAME=daniel
-ADMIN_PASSWORD=author123
-SELAR_API_URL=
-SELAR_API_KEY=
-OPENAI_API_KEY=
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=
-SMTP_PASSWORD=
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_PHONE_NUMBER=
-PORT=5000
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV PORT=5000
+EXPOSE 5000
+
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]

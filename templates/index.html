@@ -1,185 +1,105 @@
-import json
-import os
-from functools import wraps
-from pathlib import Path
-from typing import Any, Dict, List
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daniel Kwesi Ansah | Marketing Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body class="page-shell">
+    <header class="main-header">
+      <div class="container nav">
+        <div class="brand">
+          <span class="brand-mark">D</span>
+          Daniel Kwesi Ansah
+        </div>
+        <nav>
+          <a href="#about">About</a>
+          <a href="#products">Products</a>
+          <a href="#offers">Offers</a>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/admin">Admin</a>
+        </nav>
+      </div>
+    </header>
 
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Amazon + Selar Growth Engine</p>
+            <h1>Turn your author brand into a high-converting sales machine.</h1>
+            <p>
+              Launch smarter campaigns, grow your Amazon presence, convert Selar traffic,
+              and automate your next high-value offer with a brand-first marketing ecosystem.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="https://amazon.com/author/danielkwesiansah" target="_blank">Amazon Author</a>
+              <a class="btn btn-secondary" href="https://selar.com/m/danielkwesiansah" target="_blank">Selar Store</a>
+            </div>
+          </div>
 
-from src.config import (
-    ADMIN_PASSWORD,
-    ADMIN_USERNAME,
-    AMAZON_PROFILE_URL,
-    APP_TITLE,
-    SELAR_STORE_URL,
-    SECRET_KEY,
-)
-from src.marketing.agent import MarketingAgent
-from src.marketing.campaign_templates import build_campaign_templates
-from src.config import init_db, list_campaigns, list_products, save_campaign, save_product
-from src.services.ai_creatives import generate_ad_copy
-from src.services.communications import send_email_campaign, send_sms_campaign
-from src.services.selar_sync import sync_selar_products
+          <div class="hero-panel">
+            <div class="stat-card">
+              <span>Campaigns</span>
+              <strong id="campaign-count">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Avg. Offer</span>
+              <strong id="avg-price">$0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Best Channel</span>
+              <strong id="best-channel">-</strong>
+            </div>
+          </div>
+        </div>
+      </section>
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = SECRET_KEY
+      <section id="about" class="section">
+        <div class="container">
+          <h2>Designed for visibility, trust, and conversion.</h2>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Positioning</h3>
+              <p>Sharpen your message, audience, and offer to create clearer brand momentum.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Campaign Intelligence</h3>
+              <p>Use AI-assisted ideation, media strategy, and targeting to scale profitable effort.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Multi-Channel Reach</h3>
+              <p>Drive performance across Amazon, Selar, email, SMS, and cross-channel conversion.</p>
+            </article>
+          </div>
+        </div>
+      </section>
 
+      <section id="products" class="section alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>Featured offers</h2>
+            <a href="/dashboard">View dashboard</a>
+          </div>
+          <div id="product-grid" class="product-grid"></div>
+        </div>
+      </section>
 
-def login_required(view_func):
-    @wraps(view_func)
-    def wrapper(*args, **kwargs):
-        if not session.get("logged_in"):
-            return redirect(url_for("login"))
-        return view_func(*args, **kwargs)
+      <section id="offers" class="section">
+        <div class="container">
+          <h2>Campaign templates</h2>
+          <div id="campaign-list" class="campaign-list"></div>
+        </div>
+      </section>
+    </main>
 
-    return wrapper
+    <footer class="footer">
+      <div class="container">
+        <p>© 2026 Daniel Kwesi Ansah</p>
+      </div>
+    </footer>
 
-
-@app.before_request
-def ensure_db_ready():
-    init_db()
-
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-
-@app.route("/admin")
-@login_required
-def admin():
-    return render_template("admin.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            session["logged_in"] = True
-            return redirect(url_for("admin"))
-        return render_template("login.html", error="Invalid credentials")
-    return render_template("login.html")
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("home"))
-
-
-@app.route("/api/overview")
-def overview():
-    agent = MarketingAgent()
-    summary = agent.summary()
-    return jsonify(
-        {
-            "title": APP_TITLE,
-            "amazon": AMAZON_PROFILE_URL,
-            "selar": SELAR_STORE_URL,
-            "metrics": {
-                "total_products": summary["total_products"],
-                "average_price": summary["average_price"],
-                "campaign_count": summary["campaign_count"],
-                "best_channel": summary["best_selling_channel"],
-            },
-            "channels": [
-                {"name": "Amazon", "performance": 88, "goal": "Reach"},
-                {"name": "Selar", "performance": 92, "goal": "Sales"},
-                {"name": "Email", "performance": 76, "goal": "Retention"},
-                {"name": "SMS", "performance": 81, "goal": "Urgency"},
-            ],
-        }
-    )
-
-
-@app.route("/api/products")
-def products():
-    return jsonify(list_products())
-
-
-@app.route("/api/campaigns")
-def campaigns():
-    campaigns = list_campaigns()
-    if campaigns:
-        return jsonify(campaigns)
-    return jsonify(build_campaign_templates())
-
-
-@app.route("/api/ai-copy", methods=["POST"])
-def ai_copy():
-    payload = request.get_json() or {}
-    product_name = payload.get("product_name", "Book Launch")
-    audience = payload.get("audience", "new readers")
-    channel = payload.get("channel", "Amazon")
-    creative = generate_ad_copy(product_name, audience, channel)
-    return jsonify({"creative": creative})
-
-
-@app.route("/api/admin/product", methods=["POST"])
-@login_required
-def save_admin_product():
-    payload = request.get_json() or {}
-    item = save_product(payload)
-    return jsonify({"success": True, "product": item})
-
-
-@app.route("/api/admin/campaign", methods=["POST"])
-@login_required
-def save_admin_campaign():
-    payload = request.get_json() or {}
-    campaign = save_campaign(payload)
-    return jsonify({"success": True, "campaign": campaign})
-
-
-@app.route("/api/sync-selar")
-@login_required
-def sync_selar():
-    products = sync_selar_products()
-    if not products:
-        return jsonify({"success": False, "message": "No Selar products found. Add SELAR_API_URL or use mock data."})
-    for product in products:
-        save_product(
-            {
-                "id": product.get("id") or f"selar-{len(products)}",
-                "name": product.get("name") or "Selar Product",
-                "type": product.get("type", "product"),
-                "price": product.get("price", 0),
-                "currency": product.get("currency", "USD"),
-                "channel": "Selar",
-                "category": product.get("category", "digital"),
-                "tagline": product.get("tagline", "High-value product"),
-                "audience": product.get("audience", "growth-focused buyers"),
-                "cover": product.get("cover", ""),
-                "inventory": product.get("inventory", 0),
-                "rating": product.get("rating", 0),
-                "goal": product.get("goal", "conversion"),
-            }
-        )
-    return jsonify({"success": True, "count": len(products)})
-
-
-@app.route("/api/communications/email", methods=["POST"])
-@login_required
-def send_email():
-    payload = request.get_json() or {}
-    result = send_email_campaign(payload.get("subject", "Campaign update"), payload.get("body", ""), payload.get("to_email", ""))
-    return jsonify(result)
-
-
-@app.route("/api/communications/sms", methods=["POST"])
-@login_required
-def send_sms():
-    payload = request.get_json() or {}
-    result = send_sms_campaign(payload.get("message", "Check out our latest offer!"), payload.get("to_phone", ""))
-    return jsonify(result)
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=True)
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

@@ -1,42 +1,30 @@
-import os
-import smtplib
-from email.mime.text import MIMEText
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-try:
-    from twilio.rest import Client
-except Exception:  # pragma: no cover
-    Client = None
+import requests
 
-from src.config import SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USER, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from src.config import SELAR_API_KEY, SELAR_API_URL
 
 
-def send_email_campaign(subject: str, body: str, to_email: str) -> Dict[str, Any]:
-    if not SMTP_USER or not SMTP_PASSWORD:
-        return {"status": "mock", "message": "SMTP not configured. Email campaign queued for later."}
+def sync_selar_products(url: str | None = None, api_key: str | None = None) -> List[Dict[str, Any]]:
+    target_url = url or SELAR_API_URL
+    token = api_key or SELAR_API_KEY
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = SMTP_USER
-    msg["To"] = to_email
+    if not target_url:
+        return []
+
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
 
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, [to_email], msg.as_string())
-        return {"status": "sent", "message": "Email sent successfully"}
-    except Exception as exc:  # pragma: no cover
-        return {"status": "error", "message": str(exc)}
+        response = requests.get(target_url, headers=headers, timeout=20)
+        response.raise_for_status()
+        payload = response.json()
 
-
-def send_sms_campaign(message: str, to_phone: str) -> Dict[str, Any]:
-    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_PHONE_NUMBER or Client is None:
-        return {"status": "mock", "message": "Twilio not configured. SMS campaign queued for later."}
-
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    try:
-        msg = client.messages.create(body=message, from_=TWILIO_PHONE_NUMBER, to=to_phone)
-        return {"status": "sent", "message": msg.sid}
-    except Exception as exc:  # pragma: no cover
-        return {"status": "error", "message": str(exc)}
+        if isinstance(payload, dict) and "products" in payload:
+            return payload["products"]
+        if isinstance(payload, list):
+            return payload
+        return []
+    except Exception:
+        return []

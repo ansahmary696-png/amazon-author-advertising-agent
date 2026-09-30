@@ -3,24 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Login</title>
+    <title>Admin CMS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
-  <body class="auth-body">
-    <div class="auth-card">
-      <h1>Admin Login</h1>
-      {% if error %}<p class="error">{{ error }}</p>{% endif %}
-      <form method="POST" action="/login">
-        <label>
-          Username
-          <input type="text" name="username" required />
-        </label>
-        <label>
-          Password
-          <input type="password" name="password" required />
-        </label>
-        <button type="submit" class="btn primary">Login</button>
-      </form>
-    </div>
+  <body class="page-shell">
+    <header class="main-header">
+      <div class="container nav">
+        <div class="brand">
+          <span class="brand-mark">A</span>
+          Admin Panel
+        </div>
+        <nav>
+          <a href="/">Home</a>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container admin-page">
+      <h1>Campaign and product control center</h1>
+
+      <div class="admin-grid">
+        <section class="panel">
+          <h3>Create product</h3>
+          <form id="product-form">
+            <input type="text" id="product-name" placeholder="Product name" required />
+            <input type="text" id="product-type" placeholder="Type (book/course)" value="book" />
+            <input type="number" id="product-price" placeholder="Price" step="0.01" required />
+            <input type="text" id="product-channel" placeholder="Channel" value="Selar" />
+            <input type="text" id="product-audience" placeholder="Audience" value="growth-focused readers" />
+            <textarea id="product-tagline" placeholder="Short description"></textarea>
+            <button type="submit" class="btn btn-primary">Save product</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <h3>Create campaign</h3>
+          <form id="campaign-form">
+            <input type="text" id="campaign-name" placeholder="Campaign name" required />
+            <input type="text" id="campaign-channel" placeholder="Channel" value="Amazon" />
+            <input type="text" id="campaign-objective" placeholder="Objective" value="reach and conversion" />
+            <input type="text" id="campaign-keywords" placeholder="Keywords (comma separated)" />
+            <input type="number" id="campaign-budget" placeholder="Budget" step="0.01" value="150" />
+            <textarea id="campaign-creative" placeholder="Creative description"></textarea>
+            <button type="submit" class="btn btn-primary">Save campaign</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="panel ai-panel">
+        <h3>Generate AI copy</h3>
+        <div class="ai-copy-form">
+          <input type="text" id="copy-product-name" placeholder="Product name" />
+          <input type="text" id="copy-audience" placeholder="Audience" />
+          <select id="copy-channel">
+            <option>Amazon</option>
+            <option>Selar</option>
+            <option>Email</option>
+            <option>SMS</option>
+          </select>
+          <button id="generate-copy-btn" class="btn btn-secondary">Generate</button>
+        </div>
+        <div id="generated-copy" class="generated-copy"></div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
   </body>
 </html>

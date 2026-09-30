@@ -1,90 +1,77 @@
-const formatCurrency = (value) => `$${Number(value).toFixed(2)}`;
+document.getElementById('product-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-async function loadOverview() {
-  const response = await fetch('/api/overview');
-  const data = await response.json();
-  const { metrics } = data;
+  const payload = {
+    id: `manual-${Date.now()}`,
+    name: document.getElementById('product-name').value,
+    type: document.getElementById('product-type').value,
+    price: Number(document.getElementById('product-price').value),
+    channel: document.getElementById('product-channel').value,
+    audience: document.getElementById('product-audience').value,
+    tagline: document.getElementById('product-tagline').value,
+    category: 'general',
+    cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80',
+    inventory: 100,
+    rating: 4.8,
+    goal: 'conversion',
+    currency: 'USD',
+  };
 
-  document.getElementById('campaign-count').textContent = metrics.campaign_count ?? 0;
-  document.getElementById('avg-price').textContent = formatCurrency(metrics.average_price ?? 0);
-  document.getElementById('best-channel').textContent = metrics.best_channel ?? 'Amazon';
-}
+  const response = await fetch('/api/admin/product', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
-async function loadProducts() {
-  const response = await fetch('/api/products');
-  const products = await response.json();
-  const grid = document.getElementById('product-grid');
-  grid.innerHTML = products.map((product) => `
-    <article class="product-card">
-      <img src="${product.cover || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80'}" alt="${product.name}" />
-      <h3>${product.name}</h3>
-      <p>${product.tagline || 'High-value product for growth-minded buyers.'}</p>
-      <div class="product-meta">
-        <span class="price-tag">${formatCurrency(product.price || 0)}</span>
-        <span class="tag">${product.channel || 'Selar'}</span>
-      </div>
-    </article>
-  `).join('');
-}
+  const result = await response.json();
+  alert(result.success ? 'Product saved successfully' : 'Error saving product');
+  event.target.reset();
+});
 
-async function loadCampaigns() {
-  const response = await fetch('/api/campaigns');
-  const campaigns = await response.json();
-  const list = document.getElementById('campaign-list');
-  list.innerHTML = campaigns.map((campaign) => `
-    <div class="product-card">
-      <h3>${campaign.name}</h3>
-      <p><strong>Channel:</strong> ${campaign.channel}</p>
-      <p><strong>Goal:</strong> ${campaign.objective}</p>
-      <p>${campaign.creative}</p>
-      <div class="product-meta">
-        <span class="tag">Budget: ${formatCurrency(campaign.budget || 0)}</span>
-        <span class="tag">${(campaign.keywords || []).slice(0, 2).join(', ')}</span>
-      </div>
-    </div>
-  `).join('');
-}
+document.getElementById('campaign-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-async function renderDashboard() {
-  const overview = await fetch('/api/overview').then((res) => res.json());
-  const cards = [
-    ['Total products', overview.metrics.total_products],
-    ['Average price', formatCurrency(overview.metrics.average_price)],
-    ['Campaign count', overview.metrics.campaign_count],
-    ['Best channel', overview.metrics.best_channel],
-  ];
+  const payload = {
+    name: document.getElementById('campaign-name').value,
+    channel: document.getElementById('campaign-channel').value,
+    objective: document.getElementById('campaign-objective').value,
+    keywords: (document.getElementById('campaign-keywords').value || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean),
+    creative: document.getElementById('campaign-creative').value,
+    budget: Number(document.getElementById('campaign-budget').value || 0),
+    status: 'draft',
+  };
 
-  const summaryCards = document.getElementById('summary-cards');
-  summaryCards.innerHTML = cards.map(([label, value]) => `
-    <div class="summary-card">
-      <span>${label}</span>
-      <strong>${value}</strong>
-    </div>
-  `).join('');
+  const response = await fetch('/api/admin/campaign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
-  const channelChart = document.getElementById('channel-chart');
-  channelChart.innerHTML = (overview.channels || []).map((channel) => `
-    <div class="bar-row">
-      <span>${channel.name}</span>
-      <div class="bar-track"><div class="bar-fill" style="width: ${channel.performance}%"></div></div>
-      <strong>${channel.performance}%</strong>
-    </div>
-  `).join('');
+  const result = await response.json();
+  alert(result.success ? 'Campaign saved successfully' : 'Error saving campaign');
+  event.target.reset();
+});
 
-  const list = document.getElementById('campaign-ideas');
-  list.innerHTML = [
-    'Build a stronger Amazon brand positioning for better discoverability.',
-    'Use Selar bundles to increase average order value and customer lifetime value.',
-    'Retarget previous visitors with urgency-based, benefit-led offers at the right time.',
-  ].map((idea) => `<li>${idea}</li>`).join('');
-}
+document.getElementById('generate-copy-btn')?.addEventListener('click', async () => {
+  const productName = document.getElementById('copy-product-name').value || 'The Growth Blueprint';
+  const audience = document.getElementById('copy-audience').value || 'new readers';
+  const channel = document.getElementById('copy-channel').value || 'Amazon';
 
-(async function init() {
-  await loadOverview();
-  await loadProducts();
-  await loadCampaigns();
+  const response = await fetch('/api/ai-copy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ product_name: productName, audience, channel }),
+  });
 
-  if (document.getElementById('summary-cards')) {
-    await renderDashboard();
-  }
-})();
+  const result = await response.json();
+  const box = document.getElementById('generated-copy');
+
+  box.innerHTML = `
+    <h4>${result.creative.headline}</h4>
+    <p>${result.creative.body}</p>
+    <strong>CTA: ${result.creative.cta}</strong>
+  `;
+});

@@ -3,40 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Daniel Kwesi Ansah</title>
+    <title>Admin Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
-  <body>
-    <header class="topbar">
-      <div class="container nav">
-        <div class="brand">Dashboard</div>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/admin">Admin</a>
-          <a href="https://amazon.com/author/danielkwesiansah" target="_blank">Amazon</a>
-          <a href="https://selar.com/m/danielkwesiansah" target="_blank">Selar</a>
-        </nav>
-      </div>
-    </header>
+  <body class="auth-body">
+    <div class="auth-card">
+      <h1>Admin Login</h1>
 
-    <main class="dashboard">
-      <div class="container">
-        <h1>Marketing performance overview</h1>
-        <div id="summary-cards" class="summary-grid"></div>
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
 
-        <div class="panel-grid">
-          <div class="panel">
-            <h3>Channel performance</h3>
-            <div id="channel-chart" class="bar-chart"></div>
-          </div>
-          <div class="panel">
-            <h3>Campaign ideas</h3>
-            <ul id="campaign-ideas" class="idea-list"></ul>
-          </div>
-        </div>
-      </div>
-    </main>
+      <form method="POST" action="/login">
+        <label>
+          Username
+          <input type="text" name="username" required />
+        </label>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+        <label>
+          Password
+          <input type="password" name="password" required />
+        </label>
+
+        <button type="submit" class="btn btn-primary full-width">Login</button>
+      </form>
+    </div>
   </body>
 </html>

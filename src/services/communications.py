@@ -1,44 +1,53 @@
-import os
-from typing import Dict, List
+import smtplib
+from email.mime.text import MIMEText
+from typing import Any, Dict
 
-from src.config import OPENAI_API_KEY
+try:
+    from twilio.rest import Client
+except Exception:
+    Client = None
 
-
-def generate_ad_copy(product_name: str, audience: str, channel: str = "Amazon") -> Dict[str, str]:
-    if OPENAI_API_KEY:
-        try:
-            import openai
-
-            client = openai.OpenAI(api_key=OPENAI_API_KEY)
-            text = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a direct-response marketing strategist for author branding.",
-                    },
-                    {
-                        "role": "user",
-                        "content": f"Write a short high-converting ad for {product_name} for {audience} on {channel}. Include headline, body, CTA.",
-                    },
-                ],
-            )
-            response = text.choices[0].message.content
-            return {"headline": response.splitlines()[0], "body": response, "cta": "Get it now"}
-        except Exception:
-            pass
-
-    headline = f"{product_name} for {audience}"
-    body = (
-        f"Build momentum with {product_name}. Perfect for {audience} who want clarity, practical action, and measurable growth. "
-        f"Designed for modern readers and buyers on {channel}."
-    )
-    return {"headline": headline, "body": body, "cta": "Shop now"}
+from src.config import (
+    SMTP_HOST,
+    SMTP_PASSWORD,
+    SMTP_PORT,
+    SMTP_USER,
+    TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN,
+    TWILIO_PHONE_NUMBER,
+)
 
 
-def generate_campaign_variants(product_name: str, audience: str) -> List[str]:
-    return [
-        f"{product_name}: built for {audience} who want action and transformation.",
-        f"A smarter way to grow with {product_name}. Built for {audience}.",
-        f"Discover {product_name} and unlock your next level of growth.",
-    ]
+def send_email_campaign(subject: str, body: str, to_email: str) -> Dict[str, Any]:
+    if not SMTP_USER or not SMTP_PASSWORD:
+        return {"status": "mock", "message": "SMTP not configured. Email queued for later."}
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = SMTP_USER
+    msg["To"] = to_email
+
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(SMTP_USER, [to_email], msg.as_string())
+        return {"status": "sent", "message": "Email sent successfully"}
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}
+
+
+def send_sms_campaign(message: str, to_phone: str) -> Dict[str, Any]:
+    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_PHONE_NUMBER or Client is None:
+        return {"status": "mock", "message": "Twilio not configured. SMS queued for later."}
+
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    try:
+        msg = client.messages.create(
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=to_phone,
+        )
+        return {"status": "sent", "message": msg.sid}
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}

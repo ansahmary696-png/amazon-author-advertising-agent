@@ -1,71 +1,64 @@
-document.getElementById('product-form')?.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const payload = {
-    id: `manual-${Date.now()}`,
-    name: document.getElementById('product-name').value,
-    type: document.getElementById('product-type').value,
-    price: Number(document.getElementById('product-price').value),
-    channel: document.getElementById('product-channel').value,
-    audience: document.getElementById('product-audience').value,
-    tagline: document.getElementById('product-tagline').value,
-    category: 'general',
-    cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80',
-    inventory: 100,
-    rating: 4.8,
-    goal: 'conversion',
-    currency: 'USD',
-  };
-
-  const response = await fetch('/api/admin/product', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const result = await response.json();
-  alert(result.success ? 'Product saved successfully' : 'Error saving product');
-  event.target.reset();
-});
-
-document.getElementById('campaign-form')?.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const payload = {
-    name: document.getElementById('campaign-name').value,
-    channel: document.getElementById('campaign-channel').value,
-    objective: document.getElementById('campaign-objective').value,
-    keywords: (document.getElementById('campaign-keywords').value || '').split(',').map((item) => item.trim()).filter(Boolean),
-    creative: document.getElementById('campaign-creative').value,
-    budget: Number(document.getElementById('campaign-budget').value || 0),
-    status: 'draft',
-  };
-
-  const response = await fetch('/api/admin/campaign', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const result = await response.json();
-  alert(result.success ? 'Campaign saved successfully' : 'Error saving campaign');
-  event.target.reset();
-});
-
-document.getElementById('generate-copy-btn')?.addEventListener('click', async () => {
-  const productName = document.getElementById('copy-product-name').value || 'The Growth Blueprint';
-  const audience = document.getElementById('copy-audience').value || 'new readers';
-  const channel = document.getElementById('copy-channel').value || 'Amazon';
-
-  const response = await fetch('/api/ai-copy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ product_name: productName, audience, channel }),
-  });
-
-  const result = await response.json();
-  const box = document.getElementById('generated-copy');
-  box.innerHTML = `
-    <h4>${result.creative.headline}</h4>
-    <p>${result.creative.body}</p>
-    <strong>CTA: ${result.creative.cta}</strong>
-  `;
-});
+{
+  "products": [
+    {
+      "id": "book-01",
+      "name": "The Mastermind Blueprint",
+      "type": "book",
+      "price": 19.99,
+      "currency": "USD",
+      "channel": "Amazon",
+      "category": "business",
+      "tagline": "Actionable ideas for building a high-performance mindset.",
+      "audience": "aspiring founders and professionals",
+      "cover": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "inventory": 120,
+      "rating": 4.8,
+      "goal": "lead_generation"
+    },
+    {
+      "id": "book-02",
+      "name": "The Digital Wealth Playbook",
+      "type": "book",
+      "price": 24.99,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "digital",
+      "tagline": "Practical strategies for monetizing digital skills effectively.",
+      "audience": "creators and online entrepreneurs",
+      "cover": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+      "inventory": 80,
+      "rating": 4.9,
+      "goal": "sales_growth"
+    },
+    {
+      "id": "book-03",
+      "name": "Author Growth Accelerator",
+      "type": "course",
+      "price": 49.0,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "education",
+      "tagline": "Learn how to build a sustainable author business.",
+      "audience": "writers and publishers",
+      "cover": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
+      "inventory": 55,
+      "rating": 5.0,
+      "goal": "upsell"
+    },
+    {
+      "id": "book-04",
+      "name": "Morning Focus Journal",
+      "type": "digital-product",
+      "price": 12.5,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "wellness",
+      "tagline": "A guided planner to sharpen your daily output.",
+      "audience": "students and professionals",
+      "cover": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+      "inventory": 150,
+      "rating": 4.7,
+      "goal": "conversion"
+    }
+  ]
+}
