@@ -1,0 +1,38 @@
+# Amazon Author Advertising Agent
+
+This project is designed to manage a super advertising agent for an author brand and sales ecosystem.
+
+## Goals
+
+- Promote books and products through Amazon and Selar
+- Automate ad messaging and campaign planning
+- Surface product insights through a dashboard
+- Give the author a clean landing page and marketing system
+
+## Stack
+
+- Python
+- Flask
+- HTML/CSS/JavaScript
+- JSON-based product catalog
+
+## Run locally
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+## Available routes
+
+- `/` - landing page
+- `/dashboard` - analytics dashboard
+- `/api/overview` - summary metrics
+- `/api/products` - product catalog data
+
+## Scripts
+
+- `scripts/run_agent.py` - generate campaign recommendations
+- `scripts/monitor.py` - simple monitoring runner

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Daniel Kwesi Ansah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">Dashboard</div>
+        <nav>
+          <a href="/">Home</a>
+          <a href="https://amazon.com/author/danielkwesiansah" target="_blank">Amazon</a>
+          <a href="https://selar.com/m/danielkwesiansah" target="_blank">Selar</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <div class="container">
+        <h1>Marketing performance overview</h1>
+        <div id="summary-cards" class="summary-grid"></div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>Channel performance</h3>
+            <div id="channel-chart" class="bar-chart"></div>
+          </div>
+          <div class="panel">
+            <h3>Campaign ideas</h3>
+            <ul id="campaign-ideas" class="idea-list"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

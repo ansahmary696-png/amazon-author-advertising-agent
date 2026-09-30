@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daniel Kwesi Ansah | Growth Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">Daniel Kwesi Ansah</div>
+        <nav>
+          <a href="#about">About</a>
+          <a href="#products">Products</a>
+          <a href="#offers">Offers</a>
+          <a href="/dashboard">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Amazon + Selar Growth Engine</p>
+            <h1>Turn your author brand into a high-converting sales machine.</h1>
+            <p>
+              Built to promote your Amazon author presence and your Selar storefront with smarter campaign strategy,
+              beautiful offers, and faster conversions.
+            </p>
+            <div class="cta-row">
+              <a class="btn primary" href="https://amazon.com/author/danielkwesiansah" target="_blank">Amazon Author</a>
+              <a class="btn secondary" href="https://selar.com/m/danielkwesiansah" target="_blank">Selar Store</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="stat-box">
+              <span>Campaigns</span>
+              <strong id="campaign-count">0</strong>
+            </div>
+            <div class="stat-box">
+              <span>Avg. Offer</span>
+              <strong id="avg-price">$0</strong>
+            </div>
+            <div class="stat-box">
+              <span>Best Channel</span>
+              <strong id="best-channel">-</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section">
+        <div class="container">
+          <h2>Built for visibility, trust, and conversion</h2>
+          <div class="feature-grid">
+            <article>
+              <h3>Author Brand Positioning</h3>
+              <p>Help your audience understand your value, voice, and transformation.</p>
+            </article>
+            <article>
+              <h3>Smart Campaign Planning</h3>
+              <p>Generate high-intent messaging for books, courses, digital products, and offers.</p>
+            </article>
+            <article>
+              <h3>Multi-Channel Growth</h3>
+              <p>Promote your books and offers on Amazon, Selar, email, and social channels.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="products" class="section alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>Featured products</h2>
+            <a href="/dashboard">View dashboard</a>
+          </div>
+          <div id="product-grid" class="product-grid"></div>
+        </div>
+      </section>
+
+      <section id="offers" class="section">
+        <div class="container">
+          <h2>Campaign templates</h2>
+          <div id="campaign-list" class="campaign-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>© 2026 Daniel Kwesi Ansah</p>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
