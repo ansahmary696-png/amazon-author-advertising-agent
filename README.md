@@ -1,73 +1,64 @@
-# amazon-author-advertising-agent
-
-A super advertising agent and sales promotion system for:
-- Amazon Author: https://amazon.com/author/danielkwesiansah
-- Selar Store: https://selar.com/m/danielkwesiansah
-
-This project combines a marketing landing page, product catalog insights, campaign generation, dashboard analytics, and automation scripts to help grow sales and visibility across Amazon and Selar.
-
-## Features
-
-- Landing page for the author brand and store
-- Author/store dashboard with performance overview
-- Product catalog with pricing and offers
-- Marketing campaign templates for Amazon and Selar
-- Automation scripts for campaign monitoring and reporting
-- AI-style ad copy generation for books and digital products
-- Metrics summary for impressions, CTR, conversions, and ROAS
-
-## Project structure
-
-```text
-.
-├── app.py
-├── requirements.txt
-├── README.md
-├── data/
-│   └── products.json
-├── scripts/
-│   ├── run_agent.py
-│   └── monitor.py
-├── src/
-│   └── marketing/
-│       ├── __init__.py
-│       ├── __init__.py
-│       ├── agent.py
-│       └── campaign_templates.py
-├── templates/
-│   ├── index.html
-│   └── dashboard.html
-├── static/
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       └── app.js
-└── .gitignore
-```
-
-## Quick start
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python app.py
-```
-
-Then open:
-- http://localhost:5000/
-- http://localhost:5000/dashboard
-
-## Example automation
-
-```bash
-python scripts/run_agent.py
-```
-
-## Notes
-
-This project is designed as a starter marketing automation system for an author brand. You can connect it to your real Amazon Ads API, Selar product data, or a CMS later.
-
-## License
-
-MIT
+{
+  "products": [
+    {
+      "id": "book-01",
+      "name": "The Mastermind Blueprint",
+      "type": "book",
+      "price": 19.99,
+      "currency": "USD",
+      "channel": "Amazon",
+      "category": "business",
+      "tagline": "Actionable ideas for building a high-performance mindset.",
+      "audience": "aspiring founders and professionals",
+      "cover": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "inventory": 120,
+      "rating": 4.8,
+      "goal": "lead_generation"
+    },
+    {
+      "id": "book-02",
+      "name": "The Digital Wealth Playbook",
+      "type": "book",
+      "price": 24.99,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "digital",
+      "tagline": "Practical strategies for monetizing digital skills effectively.",
+      "audience": "creators and online entrepreneurs",
+      "cover": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+      "inventory": 80,
+      "rating": 4.9,
+      "goal": "sales_growth"
+    },
+    {
+      "id": "book-03",
+      "name": "Author Growth Accelerator",
+      "type": "course",
+      "price": 49.0,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "education",
+      "tagline": "Learn how to build a sustainable author business.",
+      "audience": "writers and publishers",
+      "cover": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
+      "inventory": 55,
+      "rating": 5.0,
+      "goal": "upsell"
+    },
+    {
+      "id": "book-04",
+      "name": "Morning Focus Journal",
+      "type": "digital-product",
+      "price": 12.5,
+      "currency": "USD",
+      "channel": "Selar",
+      "category": "wellness",
+      "tagline": "A guided planner to sharpen your daily output.",
+      "audience": "students and professionals",
+      "cover": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+      "inventory": 150,
+      "rating": 4.7,
+      "goal": "conversion"
+    }
+  ]
+}
